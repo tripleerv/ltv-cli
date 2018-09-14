@@ -1,5 +1,6 @@
 const ora = require('ora')
 const chalk = require('chalk')
+const inquirer = require('inquirer')
 const request = require('../utils/request')
 const conf = require('../lib/config')
 const prettyjson = require('prettyjson')
@@ -25,8 +26,6 @@ const findOrder = async (args, token) => {
     return console.error(
       `${chalk.red('You are not authenticated. Please run')} ${chalk.yellow('ltv auth')} ${chalk.red('first.')}`
     )
-
-  const spinner = ora().start('Fetching orders...')
 
   let dealerId = args.d || args.dealer
   let customerName = args.n || args.name
@@ -59,6 +58,13 @@ const findOrder = async (args, token) => {
 
   let sortedSearch = await getSearchParams(searchValues)
 
+  if (!dealerId) {
+    const dealer = await getDealerSelection()
+    dealerId = dealer.dealer
+  }
+
+  const spinner = ora().start('Fetching orders...')
+
   if (dealerId && customerName) {
     let orders = await request.get({
       url: `https://dealer.api.leisurevans.com/orders`,
@@ -82,6 +88,15 @@ const findOrder = async (args, token) => {
     })
     spinner.stop()
     return console.log(prettyjson.render(order))
+    // } else if (customerName) {
+    //   let orders = await request.get({
+    //     url: `https://dealer.api.leisurevans.com/orders`,
+    //     token: token,
+    //     query: {
+    //
+    //     }
+    //     }
+    //   })
   } else if (!dealerId) {
     spinner.stop()
     return console.log(chalk.red('No dealer ID was provided. Please provide one using -d or --dealer.'))
@@ -138,4 +153,28 @@ const inviteUser = async (args, token) => {
     spinner.stop()
     return console.error(`${chalk.red('No order ID provided. Please provide one using -o or --order.')}`)
   }
+}
+
+const getDealerSelection = async () => {
+  const questions = [
+    {
+      name: 'dealer',
+      type: 'list',
+      message: 'Choose a dealer:',
+      choices: await getDealers(),
+    },
+  ]
+  return inquirer.prompt(questions)
+}
+
+const getDealers = async () => {
+  const token = conf.get('auth.token')
+  const spinner = ora().start('Fetching dealers...')
+  let dealers = await request.get({
+    url: `https://dealer.api.leisurevans.com/dealers`,
+    token: token,
+  })
+  const updateDealers = await dealers.map(({ dealerId, name }) => ({ value: dealerId, name: name }))
+  spinner.stop()
+  return updateDealers
 }

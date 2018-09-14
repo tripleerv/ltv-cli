@@ -1,7 +1,11 @@
 {
   "parserOptions": {
     "sourceType": "script",
-    "ecmaVersion": 8
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "jsx": true,
+      "experimentalObjectRestSpread": true
+    }
   },
   "env": {
     "node": true,
