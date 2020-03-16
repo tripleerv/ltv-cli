@@ -23,7 +23,7 @@
     "figlet": "^1.2.0",
     "fuzzy-search": "^2.0.1",
     "inquirer": "^5.2.0",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.2",
     "node-fetch": "^2.1.2",
     "ora": "^2.1.0",
     "prettier": "^1.12.1",
