@@ -24,7 +24,7 @@
     "fuzzy-search": "^2.0.1",
     "inquirer": "^5.2.0",
     "minimist": "^1.2.0",
-    "node-fetch": "^2.1.2",
+    "node-fetch": "^2.6.7",
     "ora": "^2.1.0",
     "prettier": "^1.12.1",
     "prettyjson": "^1.2.1"
